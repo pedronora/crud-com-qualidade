@@ -3,8 +3,6 @@ import { v4 as uuid } from "uuid";
 // const fs = require("fs"); - CommonJS
 const DB_FILE_PATH = "./core/db";
 
-// console.log("[CRUD]");
-
 type UUID = string;
 
 interface Todo {
@@ -30,7 +28,6 @@ export function create(content: string): Todo {
     JSON.stringify(
       {
         todos,
-        dogs: [],
       },
       null,
       2
@@ -50,7 +47,7 @@ export function read(): Array<Todo> {
   return db.todos;
 }
 
-function update(id: UUID, partialTodo: Partial<Todo>): Todo {
+export function update(id: UUID, partialTodo: Partial<Todo>): Todo {
   let updatedTodo;
   const todos = read();
   todos.forEach((currentTodo) => {
@@ -84,7 +81,7 @@ function updateContentById(id: UUID, content: string): Todo {
   });
 }
 
-function deleteById(id: UUID) {
+export function deleteById(id: UUID) {
   const todos = read();
 
   const todosWithoutOne = todos.filter((todo) => {

@@ -36,6 +36,7 @@ function create({ content, onSuccess, onError }: TodoControllerCreateParams) {
   const parsedPrams = schema.string().nonempty().safeParse(content);
   if (!parsedPrams.success) {
     onError();
+    return;
   }
 
   todoRepository
@@ -48,8 +49,35 @@ function create({ content, onSuccess, onError }: TodoControllerCreateParams) {
     });
 }
 
+interface TodoControllerToggleDoneParams {
+  id: string;
+  updateTodoOnScreen: () => void;
+  onError: () => void;
+}
+function toggleDone({
+  id,
+  updateTodoOnScreen,
+  onError,
+}: TodoControllerToggleDoneParams) {
+  todoRepository
+    .toggleDone(id)
+    .then(() => {
+      // Update Real
+      updateTodoOnScreen();
+    })
+    .catch(() => {
+      onError();
+    });
+}
+
+async function deleteById(id: string): Promise<void> {
+  await todoRepository.deleteById(id);
+}
+
 export const todoController = {
   get,
   filterTodosByContent,
   create,
+  toggleDone,
+  deleteById,
 };

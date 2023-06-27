@@ -8,6 +8,7 @@ const bg = "https://mariosouto.com/cursos/crudcomqualidade/bg";
 interface HomeTodo {
   id: string;
   content: string;
+  done: boolean;
 }
 
 function HomePage() {
@@ -115,12 +116,57 @@ function HomePage() {
               return (
                 <tr key={todo.id}>
                   <td>
-                    <input type="checkbox" />
+                    <input
+                      type="checkbox"
+                      defaultChecked={todo.done}
+                      onChange={function handleToggle() {
+                        todoController.toggleDone({
+                          id: todo.id,
+                          onError() {
+                            alert("Falha ao atualizar a TODO!");
+                          },
+                          updateTodoOnScreen() {
+                            setTodos((currentTodos) => {
+                              return currentTodos.map((currentTodo) => {
+                                if (currentTodo.id === todo.id) {
+                                  return {
+                                    ...currentTodo,
+                                    done: !currentTodo.done,
+                                  };
+                                }
+                                return currentTodo;
+                              });
+                            });
+                          },
+                        });
+                      }}
+                    />
                   </td>
                   <td>{todo.id.substring(0, 4)}</td>
-                  <td>{todo.content}</td>
+                  <td>
+                    {!todo.done && todo.content}
+                    {todo.done && <s>{todo.content}</s>}
+                  </td>
                   <td align="right">
-                    <button data-type="delete">Apagar</button>
+                    <button
+                      data-type="delete"
+                      onClick={function handleClick() {
+                        todoController
+                          .deleteById(todo.id)
+                          .then(() => {
+                            setTodos((currentTodos) => {
+                              return currentTodos.filter((currentTodo) => {
+                                return currentTodo.id !== todo.id;
+                              });
+                            });
+                          })
+                          .catch(() => {
+                            console.error("Failed to delete");
+                          });
+                      }}
+                    >
+                      Apagar
+                    </button>
                   </td>
                 </tr>
               );
