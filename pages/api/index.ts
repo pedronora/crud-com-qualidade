@@ -4,5 +4,12 @@ export default function handler(
   request: NextApiRequest,
   response: NextApiResponse
 ) {
-  response.status(200).json({ message: "Olá mundo!" });
+  if (request.method === "GET") {
+    response.status(200).json({ message: "Olá mundo!" });
+    return;
+  }
+
+  response.status(405).json({
+    error: { message: "Method not allowed" },
+  });
 }
